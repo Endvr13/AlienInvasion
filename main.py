@@ -113,8 +113,6 @@ class AlienInvasion:
 
     def _create_bg_stars(self):
         star = Star(self)
-        star_width, star_height = star.x, star.y
-        available_space_x = self.settings.screen_width
 
         available_space_y = self.settings.screen_height
         number_rows = available_space_y
@@ -131,6 +129,21 @@ class AlienInvasion:
         star.rect.y = star.rect.height + star.rect.height * row_number
         self.stars.add(star)
 
+    def _update_aliens(self):
+        self._check_fleet_edges()
+        self.aliens.update()
+
+    def _check_fleet_edges(self):
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_directions()
+                break
+
+    def _change_fleet_directions(self):
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
     def _update_screen(self):
         """Updates screen"""
         # Redraw the screen during each pass through the loop.
@@ -146,9 +159,6 @@ class AlienInvasion:
         self.ship.blitme()
         # Make the most recently drawn screen visible.
         pygame.display.flip()
-
-    def _update_aliens(self):
-        self.aliens.update()
 
 
 if __name__ == '__main__':
