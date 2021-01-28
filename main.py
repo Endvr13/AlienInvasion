@@ -1,11 +1,13 @@
 import sys
 
 import pygame
+import numpy
 
 from alien import Alien
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from star import Star
 
 
 class AlienInvasion:
@@ -21,10 +23,11 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
 
+        self.stars = pygame.sprite.Group()
+        self._create_bg_stars()
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
-
         self._create_fleet()
 
     def run_game(self):
@@ -35,7 +38,7 @@ class AlienInvasion:
             # Update game objects
             self.ship.update()
             self._update_bullets()
-
+            self._update_aliens()
             self._update_screen()
 
     def _check_events(self):
@@ -88,21 +91,64 @@ class AlienInvasion:
 
     def _create_fleet(self):
         alien = Alien(self)
-        alien_width = alien.rect.width
-        available_space = self.settings.screen_width - (2 * alien_width)
-        number_aliens_x
+        alien_width, alien_height = alien.rect.size
+        available_space_x = self.settings.screen_width - float(1.33 * alien_width)
+        number_aliens_x = available_space_x // float(1.33 * alien_width)
+
+        ship_height = self.ship.rect.height
+        available_space_y = (self.settings.screen_height - (3 * alien_height) - ship_height)
+        number_rows = available_space_y // (2 * alien_height)
+
+        for row_number in numpy.arange(number_rows):
+            for alien_number in numpy.arange(number_aliens_x):
+                self._create_aliens(alien_number, row_number)
+
+    def _create_aliens(self, alien_number, row_number):
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        alien.x = alien_width + 1.33 * alien_width * alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+        self.aliens.add(alien)
+
+    def _create_bg_stars(self):
+        star = Star(self)
+        star_width, star_height = star.x, star.y
+        available_space_x = self.settings.screen_width
+
+        available_space_y = self.settings.screen_height
+        number_rows = available_space_y
+
+        for row_number in numpy.arange(number_rows):
+            for star_number in numpy.arange(5):
+                self._create_stars(star_number, row_number)
+
+    def _create_stars(self, star_number, row_number):
+        star = Star(self)
+        star_width, star_height = star.rect.x, star.rect.y
+        star.x = star_width + star_width * star_number
+        star.rect.x = star.x
+        star.rect.y = star.rect.height + star.rect.height * row_number
+        self.stars.add(star)
 
     def _update_screen(self):
         """Updates screen"""
         # Redraw the screen during each pass through the loop.
+
         self.screen.fill(self.settings.bg_colour)
-        self.ship.blitme()
+
+        for star in self.stars.sprites():
+            star.draw_star()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
 
         self.aliens.draw(self.screen)
+        self.ship.blitme()
         # Make the most recently drawn screen visible.
         pygame.display.flip()
+
+    def _update_aliens(self):
+        self.aliens.update()
 
 
 if __name__ == '__main__':

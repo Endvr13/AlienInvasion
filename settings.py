@@ -1,3 +1,6 @@
+from random import randint
+
+
 class Settings:
 
     def __init__(self):
@@ -16,3 +19,11 @@ class Settings:
         self.bullet_height = 15
         self.bullet_color = (250, 250, 250)
         self.bullets_allowed = 6
+
+        # Star Settings
+        self.star_width = randint(1, 4)
+        self.star_height = randint(1, 4)
+        self.star_color = (250, 255, 200)
+
+        # Alien Settings
+        self.alien_speed = 1.0
