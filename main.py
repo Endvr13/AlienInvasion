@@ -77,7 +77,7 @@ class AlienInvasion:
 
     def _update_bullets(self):
         self.bullets.update()
-
+        # Remove bullets outside play area
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
