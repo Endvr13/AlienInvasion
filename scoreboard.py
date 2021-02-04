@@ -32,7 +32,6 @@ class Scoreboard:
         self.score_rect.top = 20
 
     def prep_highscore(self):
-
         rounded_highscore = round(self.stats.highscore)
         highscore_str = "{:,}".format(rounded_highscore)
         self.highscore_image = self.font.render(highscore_str, True, self.text_color, self.settings.bg_colour)
@@ -69,4 +68,3 @@ class Scoreboard:
             ship.rect.x = 10 + ship_number * ship.rect.width
             ship.rect.y = 10
             self.ships.add(ship)
-

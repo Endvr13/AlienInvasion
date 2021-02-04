@@ -12,7 +12,7 @@ from star import Star
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
-
+import sound_effects as se
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
@@ -70,10 +70,6 @@ class AlienInvasion:
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
-        elif event.key == pygame.K_UP:
-            self.ship.moving_up = True
-        elif event.key == pygame.K_DOWN:
-            self.ship.moving_down = True
         elif event.key == pygame.K_ESCAPE:
             sys.exit()
         elif event.key == pygame.K_SPACE:
@@ -85,15 +81,14 @@ class AlienInvasion:
             self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
-        elif event.key == pygame.K_UP:
-            self.ship.moving_up = False
-        elif event.key == pygame.K_DOWN:
-            self.ship.moving_down = False
 
     def _fire_bullet(self):
+        """Create a new bullet and add it to the bullets group"""
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
+            se.bullet_sound.set_volume(0.25)
+            se.bullet_sound.play()
 
     def _update_bullets(self):
         self.bullets.update()
@@ -110,6 +105,8 @@ class AlienInvasion:
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.sb.prep_score()
             self.sb.check_highscore()
+            se.alien_sound.set_volume(0.25)
+            se.bullet_sound.play()
 
         if not self.aliens:
             self.bullets.empty()
